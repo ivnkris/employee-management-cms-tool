@@ -98,6 +98,93 @@ const addRole = async () => {
   );
 };
 
+const addEmployee = async () => {
+  const db = new DB("employee_management_system");
+
+  const allRoles = await db.query("SELECT role.id, title FROM role");
+  const roleChoices = allRoles.map((role) => {
+    return role.title;
+  });
+
+  const employeeQuestions = [
+    {
+      type: "input",
+      name: "firstName",
+      message: "What is the first name of the new employee?",
+    },
+    {
+      type: "input",
+      name: "lastName",
+      message: "What is the last name of the new employee?",
+    },
+    {
+      type: "list",
+      name: "roleChoice",
+      choices: roleChoices,
+      message: "Select the role of the new employee:",
+    },
+  ];
+
+  const newEmployee = await inquirer.prompt(employeeQuestions);
+  const filteredRole = allRoles.filter((role) => {
+    if (role.title === newEmployee.roleChoice) {
+      return true;
+    }
+  });
+
+  await db.parameterisedQuery(
+    "INSERT INTO `employee_management_system`.`employee` (`first_name`, `last_name`, `role_id`) VALUES (?, ?, ?);",
+    [newEmployee.firstName, newEmployee.lastName, filteredRole[0].id]
+  );
+
+  const managerQuestion = [
+    {
+      type: "confirm",
+      name: "hasManager",
+      message: "Does the new employee have a manager?",
+    },
+  ];
+
+  const isManager = await inquirer.prompt(managerQuestion);
+
+  if (isManager.hasManager) {
+    const allEmployees = await db.query(
+      "SELECT employee.id, first_name, last_name FROM employee_management_system.employee;"
+    );
+    const managerChoices = allEmployees.map((employee) => {
+      return `${employee.first_name} ${employee.last_name}`;
+    });
+    const newEmployee = managerChoices.pop();
+
+    const managerNameQuestion = [
+      {
+        type: "list",
+        name: "managerChoice",
+        choices: managerChoices,
+        message: "Select the new employee's manager:",
+      },
+    ];
+
+    const addManager = await inquirer.prompt(managerNameQuestion);
+
+    const filteredManager = allEmployees.filter((employee) => {
+      if (
+        `${employee.first_name} ${employee.last_name}` ===
+        addManager.managerChoice
+      ) {
+        return true;
+      }
+    });
+
+    const employeeIndex = allEmployees.length - 1;
+
+    await db.parameterisedQuery(
+      "UPDATE `employee_management_system`.`employee` SET `manager_id` = ? WHERE (`id` = ?);",
+      [filteredManager[0].id, allEmployees[employeeIndex].id]
+    );
+  }
+};
+
 const mainMenu = async () => {
   const menuQuestions = [
     {
@@ -134,7 +221,7 @@ const mainMenu = async () => {
     } else if (menuOption.menuChoices === "Add new role") {
       await addRole();
     } else if (menuOption.menuChoices === "Add new employee") {
-      console.log("adding new employee");
+      await addEmployee();
     } else if (menuOption.menuChoices === "Update employee role") {
       console.log("updating employee role");
     }
