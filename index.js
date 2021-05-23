@@ -185,6 +185,59 @@ const addEmployee = async () => {
   }
 };
 
+const updateEmployeeRole = async () => {
+  const db = new DB("employee_management_system");
+
+  const allEmployees = await db.query(
+    "SELECT employee.id, first_name, last_name FROM employee_management_system.employee;"
+  );
+  const employeeChoices = allEmployees.map((employee) => {
+    return `${employee.first_name} ${employee.last_name}`;
+  });
+
+  const allRoles = await db.query("SELECT role.id, title FROM role");
+  const roleChoices = allRoles.map((role) => {
+    return role.title;
+  });
+
+  const roleUpdateQuestion = [
+    {
+      type: "list",
+      name: "employeeChoice",
+      choices: employeeChoices,
+      message: "Select the employee whose role you would like to update:",
+    },
+    {
+      type: "list",
+      name: "roleChoice",
+      choices: roleChoices,
+      message: "Select the new role of the employee:",
+    },
+  ];
+
+  const toUpdateEmployee = await inquirer.prompt(roleUpdateQuestion);
+
+  const filteredEmployees = allEmployees.filter((employee) => {
+    if (
+      `${employee.first_name} ${employee.last_name}` ===
+      toUpdateEmployee.employeeChoice
+    ) {
+      return true;
+    }
+  });
+
+  const filteredRole = allRoles.filter((role) => {
+    if (role.title === toUpdateEmployee.roleChoice) {
+      return true;
+    }
+  });
+
+  await db.parameterisedQuery(
+    "UPDATE `employee_management_system`.`employee` SET `role_id` = ? WHERE (`id` = ?);",
+    [filteredRole[0].id, filteredEmployees[0].id]
+  );
+};
+
 const mainMenu = async () => {
   const menuQuestions = [
     {
@@ -223,7 +276,7 @@ const mainMenu = async () => {
     } else if (menuOption.menuChoices === "Add new employee") {
       await addEmployee();
     } else if (menuOption.menuChoices === "Update employee role") {
-      console.log("updating employee role");
+      await updateEmployeeRole();
     }
   }
 };
