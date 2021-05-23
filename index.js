@@ -358,6 +358,41 @@ const deleteRole = async () => {
   ]);
 };
 
+const deleteEmployee = async () => {
+  const db = new DB("employee_management_system");
+
+  const allEmployees = await db.query(
+    "SELECT id, first_name, last_name FROM employee_management_system.employee;"
+  );
+  const employeeChoices = allEmployees.map((employee) => {
+    return `${employee.first_name} ${employee.last_name}`;
+  });
+
+  const employeeQuestion = [
+    {
+      type: "list",
+      name: "employeeChoice",
+      choices: employeeChoices,
+      message: "Select the employee you would like to delete:",
+    },
+  ];
+
+  const whichEmployee = await inquirer.prompt(employeeQuestion);
+
+  const filteredEmployee = allEmployees.filter((employee) => {
+    if (
+      `${employee.first_name} ${employee.last_name}` ===
+      whichEmployee.employeeChoice
+    ) {
+      return true;
+    }
+  });
+
+  await db.parameterisedQuery("DELETE FROM employee WHERE id = ?;", [
+    filteredEmployee[0].id,
+  ]);
+};
+
 const mainMenu = async () => {
   const menuQuestions = [
     {
@@ -375,6 +410,7 @@ const mainMenu = async () => {
         "Update employee manager",
         "Delete department",
         "Delete role",
+        "Delete employee",
         "Exit",
       ],
       message: "Please, select what would you like to do:",
@@ -409,6 +445,8 @@ const mainMenu = async () => {
       await deleteDepartment();
     } else if (menuOption.menuChoices === "Delete role") {
       await deleteRole();
+    } else if (menuOption.menuChoices === "Delete employee") {
+      await deleteEmployee();
     }
   }
 };
