@@ -91,6 +91,9 @@ const init = async () => {
   await mainMenu();
 
   await db.end();
+  console.log(
+    "Thank you for using our programme. Press 'control+C' to exit mySQL in your terminal"
+  );
 };
 
 init();
