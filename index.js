@@ -1,7 +1,18 @@
 const DB = require("./src/db/DB");
 const inquirer = require("inquirer");
+const consoleTable = require("console.table");
 
-const viewMenu = async () => {
+const viewDepartments = async () => {
+  const db = new DB("employee_management_system");
+
+  const allDepartments = await db.query(
+    'SELECT department.id as "Department ID", name as "Department Name", title as "Role Title", salary as "Salary" FROM department LEFT JOIN role ON role.department_id = department.id'
+  );
+  console.log("\n");
+  console.table(allDepartments);
+};
+
+const mainMenu = async () => {
   const menuQuestions = [
     {
       type: "list",
@@ -26,7 +37,7 @@ const viewMenu = async () => {
     if (menuOption.menuChoices === "Exit") {
       inProgress = false;
     } else if (menuOption.menuChoices === "View all departments") {
-      console.log("viewing departments");
+      viewDepartments();
     } else if (menuOption.menuChoices === "View all roles") {
       console.log("viewing roles");
     } else if (menuOption.menuChoices === "View all employees") {
@@ -48,7 +59,7 @@ const init = async () => {
 
   await db.start();
 
-  await viewMenu();
+  await mainMenu();
 
   await db.end();
 };
