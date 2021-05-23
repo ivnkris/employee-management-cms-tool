@@ -10,6 +10,22 @@ const viewDepartments = async () => {
   );
   console.log("\n");
   console.table(allDepartments);
+  console.log("\n");
+  console.log("\n");
+  console.log("Press the Up or Down arrow to return to the menu options");
+};
+
+const viewRoles = async () => {
+  const db = new DB("employee_management_system");
+
+  const allRoles = await db.query(
+    'SELECT role.id as "Role ID", title as "Role Title", salary as "Salary", name as "Department" FROM role RIGHT JOIN department ON role.department_id = department.id'
+  );
+  console.log("\n");
+  console.table(allRoles);
+  console.log("\n");
+  console.log("\n");
+  console.log("Press the Up or Down arrow to return to the menu options");
 };
 
 const mainMenu = async () => {
@@ -39,7 +55,7 @@ const mainMenu = async () => {
     } else if (menuOption.menuChoices === "View all departments") {
       viewDepartments();
     } else if (menuOption.menuChoices === "View all roles") {
-      console.log("viewing roles");
+      viewRoles();
     } else if (menuOption.menuChoices === "View all employees") {
       console.log("viewing employees");
     } else if (menuOption.menuChoices === "Add new department") {
