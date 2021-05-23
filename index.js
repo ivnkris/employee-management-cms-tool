@@ -57,6 +57,47 @@ const addDepartment = async () => {
   );
 };
 
+const addRole = async () => {
+  const db = new DB("employee_management_system");
+
+  const allDepartments = await db.query(
+    "SELECT department.id, name FROM department"
+  );
+  const departmentChoices = allDepartments.map((department) => {
+    return department.name;
+  });
+
+  const roleQuestions = [
+    {
+      type: "input",
+      name: "roleTitle",
+      message: "What is the title of the new role?",
+    },
+    {
+      type: "input",
+      name: "roleSalary",
+      message: "What is the salary?",
+    },
+    {
+      type: "list",
+      name: "roleDepartment",
+      choices: departmentChoices,
+    },
+  ];
+
+  const newRole = await inquirer.prompt(roleQuestions);
+  const filteredDepartment = allDepartments.filter((department) => {
+    if (department.name === newRole.roleDepartment) {
+      return true;
+    }
+  });
+
+  await db.parameterisedQuery(
+    "INSERT INTO `employee_management_system`.`role` (`title`, `salary`, `department_id`) VALUES (?, ?, ?);",
+    [newRole.roleTitle, newRole.roleSalary, filteredDepartment[0].id]
+  );
+};
+
 const mainMenu = async () => {
   const menuQuestions = [
     {
@@ -91,7 +132,7 @@ const mainMenu = async () => {
     } else if (menuOption.menuChoices === "Add new department") {
       await addDepartment();
     } else if (menuOption.menuChoices === "Add new role") {
-      console.log("adding new role");
+      await addRole();
     } else if (menuOption.menuChoices === "Add new employee") {
       console.log("adding new employee");
     } else if (menuOption.menuChoices === "Update employee role") {
