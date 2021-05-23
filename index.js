@@ -238,6 +238,61 @@ const updateEmployeeRole = async () => {
   );
 };
 
+const updateEmployeeManager = async () => {
+  const db = new DB("employee_management_system");
+
+  const allEmployees = await db.query(
+    "SELECT employee.id, first_name, last_name FROM employee_management_system.employee;"
+  );
+  const employeeChoices = allEmployees.map((employee) => {
+    return `${employee.first_name} ${employee.last_name}`;
+  });
+
+  const employeeNameQuestion = [
+    {
+      type: "list",
+      name: "employeeChoice",
+      choices: employeeChoices,
+      message: "Select the employee whose manager you would like to update:",
+    },
+  ];
+
+  const managerNameQuestion = [
+    {
+      type: "list",
+      name: "managerChoice",
+      choices: employeeChoices,
+      message: "Select the employee's new manager:",
+    },
+  ];
+
+  const whichEmployee = await inquirer.prompt(employeeNameQuestion);
+  const newManager = await inquirer.prompt(managerNameQuestion);
+
+  const filteredEmployee = allEmployees.filter((employee) => {
+    if (
+      `${employee.first_name} ${employee.last_name}` ===
+      whichEmployee.employeeChoice
+    ) {
+      return true;
+    }
+  });
+
+  const filteredManager = allEmployees.filter((employee) => {
+    if (
+      `${employee.first_name} ${employee.last_name}` ===
+      newManager.managerChoice
+    ) {
+      return true;
+    }
+  });
+
+  await db.parameterisedQuery(
+    "UPDATE `employee_management_system`.`employee` SET `manager_id` = ? WHERE (`id` = ?);",
+    [filteredManager[0].id, filteredEmployee[0].id]
+  );
+};
+
 const mainMenu = async () => {
   const menuQuestions = [
     {
@@ -251,6 +306,7 @@ const mainMenu = async () => {
         "Add new role",
         "Add new employee",
         "Update employee role",
+        "Update employee manager",
         "Exit",
       ],
       message: "Please, select what would you like to do:",
@@ -277,6 +333,8 @@ const mainMenu = async () => {
       await addEmployee();
     } else if (menuOption.menuChoices === "Update employee role") {
       await updateEmployeeRole();
+    } else if (menuOption.menuChoices === "Update employee manager") {
+      await updateEmployeeManager();
     }
   }
 };
