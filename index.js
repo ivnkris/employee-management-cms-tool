@@ -41,6 +41,22 @@ const viewEmployees = async () => {
   console.log("Press the Up or Down arrow to return to the menu options");
 };
 
+const addDepartment = async () => {
+  const db = new DB("employee_management_system");
+  const departmentQuestions = [
+    {
+      type: "input",
+      name: "departmentName",
+      message: "What is the name of the new department?",
+    },
+  ];
+  const newDepartment = await inquirer.prompt(departmentQuestions);
+  await db.parameterisedQuery(
+    "INSERT INTO `employee_management_system`.`department` (`name`) VALUES (?);",
+    [newDepartment.departmentName]
+  );
+};
+
 const mainMenu = async () => {
   const menuQuestions = [
     {
@@ -56,6 +72,7 @@ const mainMenu = async () => {
         "Update employee role",
         "Exit",
       ],
+      message: "Please, select what would you like to do:",
     },
   ];
 
@@ -72,7 +89,7 @@ const mainMenu = async () => {
     } else if (menuOption.menuChoices === "View all employees") {
       viewEmployees();
     } else if (menuOption.menuChoices === "Add new department") {
-      console.log("adding new department");
+      await addDepartment();
     } else if (menuOption.menuChoices === "Add new role") {
       console.log("adding new role");
     } else if (menuOption.menuChoices === "Add new employee") {
