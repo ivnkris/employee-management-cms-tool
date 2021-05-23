@@ -13,6 +13,8 @@ class DB {
     this.database = database;
     this.connection = mysql.createConnection(databaseOptions);
   }
+
+  start() {}
 }
 
 module.exports = DB;
