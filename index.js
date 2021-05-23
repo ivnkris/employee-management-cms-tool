@@ -1,7 +1,11 @@
 const DB = require("./src/db/DB");
 
-const init = () => {
-  console.log("programme started");
+const init = async () => {
+  const db = new DB("employee_management_system");
+
+  await db.start();
+
+  await db.end();
 };
 
 init();
