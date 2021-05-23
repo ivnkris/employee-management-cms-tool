@@ -41,6 +41,19 @@ const viewEmployees = async () => {
   console.log("Press the Up or Down arrow to return to the menu options");
 };
 
+const viewEmployeesByManager = async () => {
+  const db = new DB("employee_management_system");
+
+  const allEmployees = await db.query(
+    'SELECT a.id as "Manager ID", a.first_name as "First Name", a.last_name as "Last Name", title as "Title", CONCAT(b.first_name," ",b.last_name) as "Direct Report\'s Name", name as "Department" FROM employee a INNER JOIN employee b on b.manager_id = a.id LEFT JOIN role ON a.role_id = role.id LEFT JOIN department ON role.department_id = department.id'
+  );
+  console.log("\n");
+  console.table(allEmployees);
+  console.log("\n");
+  console.log("\n");
+  console.log("Press the Up or Down arrow to return to the menu options");
+};
+
 const addDepartment = async () => {
   const db = new DB("employee_management_system");
   const departmentQuestions = [
@@ -302,6 +315,7 @@ const mainMenu = async () => {
         "View all departments",
         "View all roles",
         "View all employees",
+        "View employees by manager",
         "Add new department",
         "Add new role",
         "Add new employee",
@@ -325,6 +339,8 @@ const mainMenu = async () => {
       viewRoles();
     } else if (menuOption.menuChoices === "View all employees") {
       viewEmployees();
+    } else if (menuOption.menuChoices === "View employees by manager") {
+      viewEmployeesByManager();
     } else if (menuOption.menuChoices === "Add new department") {
       await addDepartment();
     } else if (menuOption.menuChoices === "Add new role") {
