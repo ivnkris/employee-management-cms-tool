@@ -2,9 +2,9 @@ const DB = require("./src/db/DB");
 const inquirer = require("inquirer");
 const consoleTable = require("console.table");
 
-const viewDepartments = async () => {
-  const db = new DB("employee_management_system");
+const db = new DB("employee_management_system");
 
+const viewDepartments = async () => {
   const allDepartments = await db.query(
     'SELECT department.id as "Department ID", name as "Department Name", title as "Role Title", salary as "Salary" FROM department LEFT JOIN role ON role.department_id = department.id'
   );
@@ -16,8 +16,6 @@ const viewDepartments = async () => {
 };
 
 const viewRoles = async () => {
-  const db = new DB("employee_management_system");
-
   const allRoles = await db.query(
     'SELECT role.id as "Role ID", title as "Role Title", salary as "Salary", name as "Department" FROM role RIGHT JOIN department ON role.department_id = department.id'
   );
@@ -29,8 +27,6 @@ const viewRoles = async () => {
 };
 
 const viewEmployees = async () => {
-  const db = new DB("employee_management_system");
-
   const allEmployees = await db.query(
     'SELECT a.id as "Employee ID", a.first_name as "First Name", a.last_name as "Last Name", title as "Title", CONCAT(b.first_name," ",b.last_name) as "Manager\'s Name", name as "Department" FROM employee a LEFT JOIN employee b on a.manager_id = b.id LEFT JOIN role ON a.role_id = role.id LEFT JOIN department ON role.department_id = department.id'
   );
@@ -42,8 +38,6 @@ const viewEmployees = async () => {
 };
 
 const viewEmployeesByManager = async () => {
-  const db = new DB("employee_management_system");
-
   const allEmployees = await db.query(
     'SELECT a.id as "Manager ID", a.first_name as "First Name", a.last_name as "Last Name", title as "Title", CONCAT(b.first_name," ",b.last_name) as "Direct Report\'s Name", name as "Department" FROM employee a INNER JOIN employee b on b.manager_id = a.id LEFT JOIN role ON a.role_id = role.id LEFT JOIN department ON role.department_id = department.id'
   );
@@ -55,7 +49,6 @@ const viewEmployeesByManager = async () => {
 };
 
 const addDepartment = async () => {
-  const db = new DB("employee_management_system");
   const departmentQuestions = [
     {
       type: "input",
@@ -71,8 +64,6 @@ const addDepartment = async () => {
 };
 
 const addRole = async () => {
-  const db = new DB("employee_management_system");
-
   const allDepartments = await db.query(
     "SELECT department.id, name FROM department"
   );
@@ -112,8 +103,6 @@ const addRole = async () => {
 };
 
 const addEmployee = async () => {
-  const db = new DB("employee_management_system");
-
   const allRoles = await db.query("SELECT role.id, title FROM role");
   const roleChoices = allRoles.map((role) => {
     return role.title;
@@ -179,7 +168,6 @@ const addEmployee = async () => {
     ];
 
     const addManager = await inquirer.prompt(managerNameQuestion);
-
     const filteredManager = allEmployees.filter((employee) => {
       if (
         `${employee.first_name} ${employee.last_name}` ===
@@ -190,7 +178,6 @@ const addEmployee = async () => {
     });
 
     const employeeIndex = allEmployees.length - 1;
-
     await db.parameterisedQuery(
       "UPDATE `employee_management_system`.`employee` SET `manager_id` = ? WHERE (`id` = ?);",
       [filteredManager[0].id, allEmployees[employeeIndex].id]
@@ -199,8 +186,6 @@ const addEmployee = async () => {
 };
 
 const updateEmployeeRole = async () => {
-  const db = new DB("employee_management_system");
-
   const allEmployees = await db.query(
     "SELECT employee.id, first_name, last_name FROM employee_management_system.employee;"
   );
@@ -229,7 +214,6 @@ const updateEmployeeRole = async () => {
   ];
 
   const toUpdateEmployee = await inquirer.prompt(roleUpdateQuestion);
-
   const filteredEmployees = allEmployees.filter((employee) => {
     if (
       `${employee.first_name} ${employee.last_name}` ===
@@ -238,7 +222,6 @@ const updateEmployeeRole = async () => {
       return true;
     }
   });
-
   const filteredRole = allRoles.filter((role) => {
     if (role.title === toUpdateEmployee.roleChoice) {
       return true;
@@ -252,8 +235,6 @@ const updateEmployeeRole = async () => {
 };
 
 const updateEmployeeManager = async () => {
-  const db = new DB("employee_management_system");
-
   const allEmployees = await db.query(
     "SELECT employee.id, first_name, last_name FROM employee_management_system.employee;"
   );
@@ -269,7 +250,6 @@ const updateEmployeeManager = async () => {
       message: "Select the employee whose manager you would like to update:",
     },
   ];
-
   const managerNameQuestion = [
     {
       type: "list",
@@ -290,7 +270,6 @@ const updateEmployeeManager = async () => {
       return true;
     }
   });
-
   const filteredManager = allEmployees.filter((employee) => {
     if (
       `${employee.first_name} ${employee.last_name}` ===
@@ -307,8 +286,6 @@ const updateEmployeeManager = async () => {
 };
 
 const deleteDepartment = async () => {
-  const db = new DB("employee_management_system");
-
   const allDepartments = await db.query(
     "SELECT name FROM employee_management_system.department;"
   );
@@ -333,8 +310,6 @@ const deleteDepartment = async () => {
 };
 
 const deleteRole = async () => {
-  const db = new DB("employee_management_system");
-
   const allRoles = await db.query(
     "SELECT title FROM employee_management_system.role;"
   );
@@ -359,8 +334,6 @@ const deleteRole = async () => {
 };
 
 const deleteEmployee = async () => {
-  const db = new DB("employee_management_system");
-
   const allEmployees = await db.query(
     "SELECT id, first_name, last_name FROM employee_management_system.employee;"
   );
@@ -452,12 +425,8 @@ const mainMenu = async () => {
 };
 
 const init = async () => {
-  const db = new DB("employee_management_system");
-
   await db.start();
-
   await mainMenu();
-
   await db.end();
   console.log(
     "Thank you for using our programme. Press 'control+C' to exit mySQL in your terminal"
