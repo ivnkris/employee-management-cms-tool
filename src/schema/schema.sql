@@ -1,3 +1,4 @@
+-- The schema of the database to be executed on the mySQL server
 DROP DATABASE IF EXISTS employee_management_system;
 CREATE DATABASE employee_management_system;
 

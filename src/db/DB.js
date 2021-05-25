@@ -14,6 +14,7 @@ class DB {
     this.connection = mysql.createConnection(databaseOptions);
   }
 
+  // A method to connect to the mySQL server
   start() {
     return new Promise((resolve, reject) => {
       const onConnect = (err) => {
@@ -28,6 +29,7 @@ class DB {
     });
   }
 
+  // A method to disconnect from the mySQL server
   end(message) {
     this.connection.end();
     console.log(
@@ -35,6 +37,7 @@ class DB {
     );
   }
 
+  // A method that takes a mySQL query as an arguments and executes it in the database
   query(sqlQuery) {
     return new Promise((resolve, reject) => {
       const handleQuery = (err, rows) => {
@@ -49,6 +52,7 @@ class DB {
     });
   }
 
+  // A method that takes a parameterised mySQL query as an argument with the parameters as an array and a boolean that when defined true console logs the inputted query
   parameterisedQuery(sqlQuery, args, info = false) {
     return new Promise((resolve, reject) => {
       const handleQuery = (err, rows) => {

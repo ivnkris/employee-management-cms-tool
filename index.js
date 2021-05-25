@@ -4,6 +4,7 @@ const consoleTable = require("console.table");
 
 const db = new DB("employee_management_system");
 
+// Function to return departments onto the console
 const viewDepartments = async () => {
   const allDepartments = await db.query(
     'SELECT department.id as "Department ID", name as "Department Name", title as "Role Title", salary as "Salary" FROM department LEFT JOIN role ON role.department_id = department.id'
@@ -15,6 +16,7 @@ const viewDepartments = async () => {
   console.log("Press the Up or Down arrow to return to the menu options");
 };
 
+// Function to return roles onto the console
 const viewRoles = async () => {
   const allRoles = await db.query(
     'SELECT role.id as "Role ID", title as "Role Title", salary as "Salary", name as "Department" FROM role RIGHT JOIN department ON role.department_id = department.id'
@@ -26,6 +28,7 @@ const viewRoles = async () => {
   console.log("Press the Up or Down arrow to return to the menu options");
 };
 
+// Function to return employees onto the console
 const viewEmployees = async () => {
   const allEmployees = await db.query(
     'SELECT a.id as "Employee ID", a.first_name as "First Name", a.last_name as "Last Name", title as "Title", CONCAT(b.first_name," ",b.last_name) as "Manager\'s Name", name as "Department" FROM employee a LEFT JOIN employee b on a.manager_id = b.id LEFT JOIN role ON a.role_id = role.id LEFT JOIN department ON role.department_id = department.id'
@@ -37,6 +40,7 @@ const viewEmployees = async () => {
   console.log("Press the Up or Down arrow to return to the menu options");
 };
 
+// Function to return employees by their manager onto the console
 const viewEmployeesByManager = async () => {
   const allEmployees = await db.query(
     'SELECT a.id as "Manager ID", a.first_name as "First Name", a.last_name as "Last Name", title as "Title", CONCAT(b.first_name," ",b.last_name) as "Direct Report\'s Name", name as "Department" FROM employee a INNER JOIN employee b on b.manager_id = a.id LEFT JOIN role ON a.role_id = role.id LEFT JOIN department ON role.department_id = department.id'
@@ -48,6 +52,7 @@ const viewEmployeesByManager = async () => {
   console.log("Press the Up or Down arrow to return to the menu options");
 };
 
+// Function to create a new entry in the department table
 const addDepartment = async () => {
   const departmentQuestions = [
     {
@@ -63,6 +68,7 @@ const addDepartment = async () => {
   );
 };
 
+// Function to create a new entry in the role table
 const addRole = async () => {
   const allDepartments = await db.query(
     "SELECT department.id, name FROM department"
@@ -102,6 +108,7 @@ const addRole = async () => {
   );
 };
 
+// Function to create a new entry in the employee table
 const addEmployee = async () => {
   const allRoles = await db.query("SELECT role.id, title FROM role");
   const roleChoices = allRoles.map((role) => {
@@ -185,6 +192,7 @@ const addEmployee = async () => {
   }
 };
 
+// Function to update the selected employee's role
 const updateEmployeeRole = async () => {
   const allEmployees = await db.query(
     "SELECT employee.id, first_name, last_name FROM employee_management_system.employee;"
@@ -234,6 +242,7 @@ const updateEmployeeRole = async () => {
   );
 };
 
+// Function to update the selected employee's manager
 const updateEmployeeManager = async () => {
   const allEmployees = await db.query(
     "SELECT employee.id, first_name, last_name FROM employee_management_system.employee;"
@@ -285,6 +294,7 @@ const updateEmployeeManager = async () => {
   );
 };
 
+// Function to delete the selected department from the database
 const deleteDepartment = async () => {
   const allDepartments = await db.query(
     "SELECT name FROM employee_management_system.department;"
@@ -309,6 +319,7 @@ const deleteDepartment = async () => {
   ]);
 };
 
+// Function to delete the selected role from the database
 const deleteRole = async () => {
   const allRoles = await db.query(
     "SELECT title FROM employee_management_system.role;"
@@ -333,6 +344,7 @@ const deleteRole = async () => {
   ]);
 };
 
+// Function to delete the selected employee from the database
 const deleteEmployee = async () => {
   const allEmployees = await db.query(
     "SELECT id, first_name, last_name FROM employee_management_system.employee;"
@@ -366,6 +378,7 @@ const deleteEmployee = async () => {
   ]);
 };
 
+// Function to render the main menu onto the console
 const mainMenu = async () => {
   const menuQuestions = [
     {
@@ -424,6 +437,7 @@ const mainMenu = async () => {
   }
 };
 
+// Function that initialises and executes the application
 const init = async () => {
   await db.start();
   await mainMenu();

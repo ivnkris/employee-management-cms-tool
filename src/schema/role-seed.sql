@@ -1,3 +1,4 @@
+-- Seed data to populate the role table for testing purposes
 INSERT INTO `employee_management_system`.`role` (`title`, `salary`, `department_id`) VALUES ('Sales Manager', '50000', '1');
 INSERT INTO `employee_management_system`.`role` (`title`, `salary`, `department_id`) VALUES ('Sales Assistant', '30000', '1');
 INSERT INTO `employee_management_system`.`role` (`title`, `salary`, `department_id`) VALUES ('Copywriter', '45000', '2');
