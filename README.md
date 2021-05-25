@@ -37,10 +37,17 @@ https://github.com/ivnkris/employee-management-cms-tool
 
 ## Link to walkthrough video
 
+https://drive.google.com/file/d/1S_FCgZxrhpwuAyelBArLtsuc1j7T7AvG/view
+
 ## Screenshots
 
-![]()
-![]()
+![Screenshot 1](./utils/images/screenshot-1.png)
+![Screenshot 2](./utils/images/screenshot-2.png)
+![Screenshot 3](./utils/images/screenshot-3.png)
+![Screenshot 4](./utils/images/screenshot-4.png)
+![Screenshot 5](./utils/images/screenshot-5.png)
+![Screenshot 6](./utils/images/screenshot-6.png)
+![Screenshot 7](./utils/images/screenshot-7.png)
 
 ## Questions
 
